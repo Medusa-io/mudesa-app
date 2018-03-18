@@ -1,23 +1,23 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { applyMiddleware, createStore } from 'redux';
+import { Provider } from 'react-redux';
+import ReduxThunk from 'redux-thunk';
+import { Provider as PaperProvider } from 'react-native-paper';
 
-export default class App extends React.Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text>Open up App.js to start working on your app!</Text>
-        <Text>Changes you make will automatically reload.</Text>
-        <Text>Shake your phone to open the developer menu.</Text>
-      </View>
-    );
-  }
-}
+import Routes from './config/routes';
+import rootReducer from './reducers/index';
+import AppContainer from './containers/AppContainer';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+const store = createStore(rootReducer, applyMiddleware(ReduxThunk));
+
+const App = () => (
+  <Provider store={store}>
+    <AppContainer>
+      <PaperProvider>
+        <Routes />
+      </PaperProvider>
+    </AppContainer>
+  </Provider>
+);
+
+export default App;
