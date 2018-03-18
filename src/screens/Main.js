@@ -29,6 +29,7 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingHorizontal: DEFAULT_MARGIN,
+    paddingTop: DEFAULT_MARGIN,
   },
   modalContainer: {
     flex: 1,
