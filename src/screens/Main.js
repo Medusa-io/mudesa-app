@@ -1,11 +1,12 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Image, Text } from 'react-native';
 import {
   Toolbar,
   ToolbarAction,
   ToolbarContent,
 } from 'react-native-paper';
 import { connect } from 'react-redux';
+import Modal from 'react-native-modal';
 
 import PropTypes from 'prop-types';
 import { AuthorizationTable } from '../components';
@@ -29,6 +30,22 @@ const styles = StyleSheet.create({
   list: {
     paddingHorizontal: DEFAULT_MARGIN,
   },
+  modalContainer: {
+    flex: 1,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  image: {
+    flex: 1,
+  },
+  closeIcon: {
+    color: '#fff',
+    backgroundColor: 'transparent',
+    fontWeight: '500',
+    fontSize: 18,
+  },
 });
 
 class Main extends React.Component {
@@ -43,34 +60,35 @@ class Main extends React.Component {
 
     this.handleMenuPress = this.handleMenuPress.bind(this);
     this.onItemPress = this.onItemPress.bind(this);
-    this.onImagePress = this.onImagePress.bind(this);
+    this.showModal = this.showModal.bind(this);
   }
 
   state = {
     activeItem: undefined,
+    modalStatus: false,
+    image: undefined,
   }
 
   componentDidMount() {
     this.props.getAuthorizations();
   }
 
-  onImagePress = () => console.log('imagePress');
-
   onItemPress = ({ _id: id }) => {
-    if (id === this.state.activeItem) {
-      this.setState({ activeItem: undefined });
-    } else {
-      this.setState({ activeItem: id });
-    }
+    if (id === this.state.activeItem) this.setState({ activeItem: undefined });
+    else this.setState({ activeItem: id });
   }
 
   handleMenuPress = () => this.props.navigation.navigate('DrawerOpen')
 
   handleNotificationPress = () => { }
 
+  showModal = image => this.setState({ modalStatus: true, image })
+
+  hideModal = () => this.setState({ modalStatus: false })
+
   render() {
     const { authorizations } = this.props;
-    const { activeItem } = this.state;
+    const { activeItem, modalStatus, image } = this.state;
 
     return (
       <View style={styles.container}>
@@ -105,8 +123,35 @@ class Main extends React.Component {
           data={authorizations}
           onItemPress={this.onItemPress}
           activeItem={activeItem}
-          onImagePress={this.onImagePress}
+          onImagePress={this.showModal}
         />
+
+        <Modal
+          isVisible={modalStatus}
+          onBackdropPress={this.hideModal}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.row}>
+              <Text
+                onPress={this.hideModal}
+                style={styles.closeIcon}
+              >
+                X
+              </Text>
+            </View>
+
+            {image
+              ? (
+                <Image
+                  resizeMode="contain"
+                  style={styles.image}
+                  source={{ uri: image }}
+                />
+              )
+              : null
+            }
+          </View>
+        </Modal>
       </View>
     );
   }

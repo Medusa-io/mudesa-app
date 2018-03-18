@@ -1,9 +1,12 @@
 import React from 'react';
 import { View, StyleSheet, Text, Image, ScrollView } from 'react-native';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 import avatar from '../assets/images/avatar.png';
 import { DEFAULT_MARGIN } from '../config/dimen';
 import DrawerItem from './DrawerItem';
+import * as AuthActions from '../actions/AuthActions';
 
 const styles = StyleSheet.create({
   container: {
@@ -42,9 +45,25 @@ const styles = StyleSheet.create({
 });
 
 class Drawer extends React.Component {
+  static propTypes = {
+    navigation: PropTypes.objectOf(PropTypes.any).isRequired,
+    logout: PropTypes.func.isRequired,
+    perfil: PropTypes.objectOf(PropTypes.any),
+  }
+
+  static defaultProps = {
+    perfil: {
+      name: 'Carregando',
+      email: 'carregando',
+    },
+  }
+
   componentDidMount() { }
 
   render() {
+    const { navigation, logout, perfil } = this.props;
+    const { name, email } = perfil;
+
     return (
       <ScrollView>
         <View style={styles.container}>
@@ -56,8 +75,8 @@ class Drawer extends React.Component {
             />
 
             <View style={styles.perfilTextContainer}>
-              <Text style={styles.name}>Elon Musk</Text>
-              <Text style={styles.normalText}>elon@medusa.io</Text>
+              <Text style={styles.name}>{name}</Text>
+              <Text style={styles.normalText}>{email}</Text>
             </View>
           </View>
 
@@ -78,6 +97,7 @@ class Drawer extends React.Component {
               label="Sair"
               icon="exit-to-app"
               containerStyle={styles.drawerItemContainer}
+              onPress={() => logout(navigation)}
             />
           </View>
         </View>
@@ -86,4 +106,6 @@ class Drawer extends React.Component {
   }
 }
 
-export default Drawer;
+const mapStateToProps = ({ auth }) => ({ perfil: auth.perfil });
+
+export default connect(mapStateToProps, { ...AuthActions })(Drawer);

@@ -155,6 +155,8 @@ class AuthorizationTable extends React.Component {
     activeItem: undefined,
   }
 
+  static headerLabels = ['ID', 'Data', 'Hora', 'Status']
+
   keyExtractor = ({ _id: id }) => id
 
   renderItem = ({ item, index }) => {
@@ -169,7 +171,7 @@ class AuthorizationTable extends React.Component {
     return (
       <View>
         {index === 0
-          ? <TableHeader labels={['ID', 'Data', 'Hora', 'Status']} />
+          ? <TableHeader labels={AuthorizationTable.headerLabels} />
           : null
         }
 
